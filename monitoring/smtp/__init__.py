@@ -1,4 +1,4 @@
 from .stmp_service import SMTPService
-from  .smtp_connection import SMTPConnection
+from .smtp_connection import SMTPConnection
 
-__ALL__ = ['SMTPService', 'SMTPConnection']
+__ALL__ = ["SMTPService", "SMTPConnection"]

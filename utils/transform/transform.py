@@ -47,7 +47,9 @@ def validate_email_column(df: pd.DataFrame) -> pd.DataFrame:
     :return: pandas DataFrame with invalid emails replaced
     """
     df["email"] = df["email"].apply(
-        lambda email: email if is_valid_email(email) else "Email Invalido"
+        lambda email: email
+        if is_valid_email(email) or email == "Sem Email"
+        else "Email Invalido"
     )
     return df
 
@@ -61,6 +63,8 @@ def validate_phone_column(df: pd.DataFrame) -> pd.DataFrame:
     :return: pandas DataFrame with invalid emails replaced
     """
     df["phone"] = df["phone"].apply(
-        lambda phone: phone if is_valid_phone(phone) else "Email Invalido"
+        lambda phone: phone
+        if is_valid_phone(phone) or phone == "Sem Telefone"
+        else "Telefone Invalido"
     )
     return df

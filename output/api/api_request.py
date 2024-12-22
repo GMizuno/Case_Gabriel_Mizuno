@@ -32,7 +32,7 @@ class APIRequests:
             "endpoint": endpoint,
             "params": params,
         }
-    
+
     @backoff.on_exception(backoff.expo, max_time=60)
     def post(self, endpoint: str, data):
         """Simula uma requisição POST retornando um dicionário falso."""

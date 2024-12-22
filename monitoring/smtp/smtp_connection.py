@@ -1,5 +1,7 @@
 class SMTPConnection:
-    def __init__(self, host: str, port: int, username: str, password: str, use_tls: bool = True):
+    def __init__(
+        self, host: str, port: int, username: str, password: str, use_tls: bool = True
+    ):
         self.host = host
         self.port = port
         self.username = username

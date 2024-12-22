@@ -27,6 +27,22 @@ def mock_data_clients() -> pd.DataFrame:
             "phone": None,
             "date": "2024-12-03",
         },
+        {
+            "id": 3,
+            "email": None,
+            "cep": None,
+            "city": None,
+            "phone": None,
+            "date": "2024-12-03",
+        },
+        {
+            "id": 4,
+            "email": None,
+            "cep": None,
+            "city": None,
+            "phone": 'iiii',
+            "date": "2024-12-13",
+        },
     ]
 
     return pd.DataFrame(data)
