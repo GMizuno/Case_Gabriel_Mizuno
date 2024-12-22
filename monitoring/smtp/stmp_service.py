@@ -17,19 +17,3 @@ class SMTPService:
             self.smtp_connection.disconnect()
         except Exception as e:
             raise ValueError(f"Erro ao enviar email: {e}")
-
-    def send_email_with_attachment(
-        self, sender: str, recipient: str, subject: str, body: str, attachment_path: str
-    ):
-        """Simula o envio de um email com anexo."""
-        self.smtp_connection.connect()
-        try:
-            print(
-                f"Simulando envio de email com anexo de {sender} para {recipient}:\n"
-                f"Assunto: {subject}\n"
-                f"Corpo: {body}\n"
-                f"Anexo: {attachment_path} (simulado)"
-            )
-            self.smtp_connection.disconnect()
-        except Exception as e:
-            raise ValueError(f"Erro ao enviar email com anexo: {e}")
