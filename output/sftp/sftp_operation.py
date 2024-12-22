@@ -1,3 +1,5 @@
+import pandas as pd
+
 from output.sftp.sftp_connection import SFTPConnection
 from output.sftp.error import (
     ConnectionException,
@@ -60,22 +62,22 @@ class SFTPOperations:
         finally:
             self.sftp_connection.disconnect()
 
-    def upload_file(self, local_path: str, remote_path: str):
+    def upload_file(self, data: pd.DataFrame, remote_path: str):
         """Realiza upload de arquivo para o servidor SFTP.
-        :param local_path:
+        :param data:
         :param remote_path:
         """
         try:
             self.sftp_connection.connect()
-            self.sftp_connection.connection.put(local_path, remote_path)
-            print(f"Arquivo {local_path} carregado para {remote_path}.")
+            self.sftp_connection.connection.put(data, remote_path)
+            print(f"Arquivo {data} carregado para {remote_path}.")
         except FileNotFoundError:
             raise FileNotFoundError(
-                f"Erro: Arquivo local '{local_path}' não encontrado."
+                f"Erro: Arquivo local '{data}' não encontrado."
             )
         except PermissionError:
             raise PermissionError(
-                f"Erro: Permissão negada para acessar o caminho '{local_path}'."
+                f"Erro: Permissão negada para acessar o caminho '{remote_path}'."
             )
         except ConnectionException as e:
             raise ConnectionException(f"Erro de conexão durante o upload: {e}")

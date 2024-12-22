@@ -40,7 +40,7 @@ def mock_data_clients() -> pd.DataFrame:
             "email": None,
             "cep": None,
             "city": None,
-            "phone": 'iiii',
+            "phone": "iiii",
             "date": "2024-12-13",
         },
     ]
