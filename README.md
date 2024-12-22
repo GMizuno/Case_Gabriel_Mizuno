@@ -38,3 +38,12 @@ Outro cenario possível é de clientes com id diferentes mais com mesmo email. N
 ## Automação do Processo
 
 ## Guardrails e Monitoramento
+
+```bash
+gcloud run jobs deploy job-quickstart \
+    --source . \
+    --tasks 1 \
+    --max-retries 5 \
+    --region use-east1 \
+    --project=case-445517
+```

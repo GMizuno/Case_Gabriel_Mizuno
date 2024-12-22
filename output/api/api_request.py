@@ -21,7 +21,7 @@ class APIRequests:
     def __init__(self, api_connection):
         self.api_connection = api_connection
 
-    @backoff.on_exception(backoff.expo, max_time=60)
+    @backoff.on_exception(backoff.expo, Exception, max_tries=10, factor=10)
     def get(self, endpoint: str, params=None):
         """Simula uma requisição GET retornando um dicionário falso."""
         print(f"GET em {endpoint} com parâmetros: {params}")
@@ -33,7 +33,7 @@ class APIRequests:
             "params": params,
         }
 
-    @backoff.on_exception(backoff.expo, max_time=60)
+    @backoff.on_exception(backoff.expo, Exception, max_tries=10, factor=10)
     def post(self, endpoint: str, data):
         """Simula uma requisição POST retornando um dicionário falso."""
         print(f"POST em {endpoint} com dados: {data}")

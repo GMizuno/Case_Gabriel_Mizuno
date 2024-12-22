@@ -8,6 +8,12 @@ def connection(
     port,
 ): ...
 
+sftp_connect_cred = {
+    'host': '111',
+    'username': '111',
+    'password': '111',
+    'port': 111,
+}
 
 class SFTPConnection:
     def __init__(self, host: str, username: str, password: str, port: int = 22):
@@ -17,7 +23,7 @@ class SFTPConnection:
         self.password = password
         self.connection = None
 
-    def ect(self):
+    def connect(self):
         """Estabelece conexão com o servidor SFTP."""
         try:
             self.connection = connection(
