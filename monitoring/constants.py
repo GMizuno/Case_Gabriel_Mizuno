@@ -4,4 +4,4 @@ EMAIL_LIST = [
     "leonardo.artur@aiqfome.com",
 ]
 
-EMAIL_SENDER = 'gabrielmizuno@gmail.com'
+EMAIL_SENDER = "gabrielmizuno@gmail.com"

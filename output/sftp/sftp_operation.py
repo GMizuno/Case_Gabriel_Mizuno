@@ -72,9 +72,7 @@ class SFTPOperations:
             self.sftp_connection.connection.put(data, remote_path)
             print(f"Arquivo {data} carregado para {remote_path}.")
         except FileNotFoundError:
-            raise FileNotFoundError(
-                f"Erro: Arquivo local '{data}' não encontrado."
-            )
+            raise FileNotFoundError(f"Erro: Arquivo local '{data}' não encontrado.")
         except PermissionError:
             raise PermissionError(
                 f"Erro: Permissão negada para acessar o caminho '{remote_path}'."

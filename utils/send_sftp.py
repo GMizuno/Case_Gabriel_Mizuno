@@ -2,6 +2,7 @@ import pandas as pd
 
 from output.sftp import SFTPOperations, SFTPConnection
 
+
 def send_to_sftp(data: pd.DataFrame, remota_path: str, sftp_connection: dict):
     try:
         sftp_connection = SFTPConnection(**sftp_connection)

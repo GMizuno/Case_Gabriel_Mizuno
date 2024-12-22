@@ -1,7 +1,9 @@
 from monitoring import SMTPConnection, SMTPService
 
 
-def send_email(sender: str, email_address: list, subject: str, body: str, smtp_connection: dict):
+def send_email(
+    sender: str, email_address: list, subject: str, body: str, smtp_connection: dict
+):
     try:
         smtp_connection = SMTPConnection(**smtp_connection)
         smtp_service = SMTPService(smtp_connection)
