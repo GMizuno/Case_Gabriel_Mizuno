@@ -4,8 +4,8 @@
 **Tratamento de valores nulos:**
 
 1.   Transaction: Itens com preço nulo serão desconsiderado
-2.   Clients: Clientes sem email preenchido corretamento serão substituidos por "Sem Email", clientes sem telefone preenchido corretamento serão substituidos por "Sem Telefone",
-3.   Products: Nenhum tratativa será feita nessas tabela pois assumisse que essa tabela terá os campos corretamente preenchidos
+2.   Clients: Clientes sem e-mail preenchido corretamento serão substituidos por "Sem Email", clientes sem telefone preenchido corretamento serão substituidos por "Sem Telefone",
+3.   Products: Nenhum tratativa será feita nessas tabelas, pois assumisse que essa tabela terá os campos corretamente preenchidos
 
 **Deduplicação:**
 
@@ -39,11 +39,25 @@ Outro cenario possível é de clientes com id diferentes mais com mesmo email. N
 
 ## Guardrails e Monitoramento
 
+## Deploy do Job
+
+Para realizar o deploy do job no Cloud Run existe duas possibilidades; Terraform ou Gcloud (linha de comando). Para 
+esse case usarei o Gcloud.
+
+OBS: link para [Terraform](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_job) e [GCloud](https://cloud.google.com/run/docs/create-jobs) 
+
 ```bash
+
 gcloud run jobs deploy job-quickstart \
     --source . \
     --tasks 1 \
     --max-retries 5 \
-    --region use-east1 \
-    --project=case-445517
+    --region us-east1 \
+    --project=case-445517 \
+    --set-secrets=API_SECERT_KEY=aiqfome_password:1,API_USER_KEY=aiqfome_host_api:1,SFPT_KEY=aiqfom_keysftp:1
 ```
+
+Pensando em melhorias e maior automação;
+
+- [Artifact Registry](https://cloud.google.com/artifact-registry/docs)
+- Github ou Gitlab

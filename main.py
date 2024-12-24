@@ -6,10 +6,8 @@ import os
 import json
 import sys
 
-# Retrieve Job-defined env vars
 TASK_INDEX = os.getenv("CLOUD_RUN_TASK_INDEX", 0)
 TASK_ATTEMPT = os.getenv("CLOUD_RUN_TASK_ATTEMPT", 0)
-# Retrieve User-defined env vars
 SLEEP_MS = os.getenv("SLEEP_MS", 0)
 FAIL_RATE = os.getenv("FAIL_RATE", 0)
 
@@ -34,19 +32,20 @@ def prepare_data_transaction():
 
 
 def main():
-
+    
     api_connect_cred = {
-        'base_url': '111',
-        'client_id': '111',
-        'client_secret': '111',
+        'base_url': 'https://aiquefome/login',
+        'client_id': os.environ['API_USER_KEY'],
+        'client_secret': os.environ['API_SECERT_KEY'],
     }
 
     sftp_connect_cred = {
-        'host': '111',
-        'username': '111',
-        'password': '111',
-        'port': 111,
+        'host': 'sftp.example.com',
+        'key':  os.environ['SFPT_KEY'],
+        'port': 22,
     }
+
+    print(os.environ['API_SECERT_KEY'])
 
     try:
         clients = prepare_data_client()
@@ -60,6 +59,14 @@ def main():
         transactions = prepare_data_transaction()
         send_to_api("", transactions, api_connect_cred)
         send_to_sftp(transactions, "", sftp_connect_cred)
+
+        send_email(
+            EMAIL_SENDER,
+            EMAIL_LIST,
+            "Bases de Transação, Produtos e Clientes",
+            "Os dados foram enviado para servidor SFTP e API",
+            {}
+        )
 
     except Exception as e:
         send_email(EMAIL_SENDER, EMAIL_LIST, "Erro no job Clients", str(e), {})

@@ -3,24 +3,16 @@ from output.sftp.error import ConnectionException
 
 def connection(
     host,
-    username,
-    password,
+    key,
     port,
 ): ...
 
-sftp_connect_cred = {
-    'host': '111',
-    'username': '111',
-    'password': '111',
-    'port': 111,
-}
 
 class SFTPConnection:
-    def __init__(self, host: str, username: str, password: str, port: int = 22):
+    def __init__(self, host: str, key: str, port: int = 22):
         self.host = host
         self.port = port
-        self.username = username
-        self.password = password
+        self.key = key
         self.connection = None
 
     def connect(self):
@@ -28,8 +20,7 @@ class SFTPConnection:
         try:
             self.connection = connection(
                 host=self.host,
-                username=self.username,
-                password=self.password,
+                key=self.key,
                 port=self.port,
             )
             print("Conexão SFTP estabelecida com sucesso!")
