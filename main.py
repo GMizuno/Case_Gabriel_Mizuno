@@ -45,7 +45,13 @@ def main():
         'port': 22,
     }
 
-    print(os.environ['API_SECERT_KEY'])
+    smtp_connect_cred = {
+        'host': 'smtp.example.com',
+        'username': 'user',
+        'password': 'password',
+        'port': 22,
+    }
+    
 
     try:
         clients = prepare_data_client()
