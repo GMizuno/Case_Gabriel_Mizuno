@@ -4,6 +4,64 @@ Nesse case foquei em mostrar quais métodos e como organizar o código, visando 
 Na útlima seção deixei alguns pontos de melhorias numa seção no final.
 
 ## Arquiterura
+1. **Mock de Dados**:
+    - Dados simulados de _clientes_, _produtos_ e _transações_ em formato `pandas.DataFrame`.
+      **Arquivos**: `client.py`, `products.py`, `transaction.py`.
+
+2. **Deduplicação e Transformação**:
+    - **Deduplicação**: Remove duplicatas baseando-se em colunas específicas:
+        - _Clientes_: Mantém o registro mais recente por ID.
+        - _Transações_: Mantém o registro mais recente por ID e produto.
+          **Arquivo**: `dedup.py`.
+
+    - **Transformação**: Limpeza e validação de dados:
+        - Substituição de valores nulos.
+        - Validação de email/telefone.
+        - Filtro de preços inválidos em transações.
+          **Arquivos**: `transform_client.py`, `trasnform_transaction.py`, `transform.py`.
+
+3. **Envio dos Dados**:
+    - **API**: Envia os dados em formato JSON a endpoints remotos.
+      **Arquivo**: `send_api.py`.
+    - **SFTP**: Faz upload de dados para servidores remotos.
+      **Arquivo**: `send_sftp.py`.
+
+4. **Notificações**:
+    - Envio de email para comunicar status (sucesso ou erro).
+      **Arquivo**: `stmp_service.py`.
+
+#### **Componentes Principais**
+- **Validação e Regras de Negócio**:
+    - Validação de formatos (ex.: email, telefone).
+      **Arquivo**: `validations.py`.
+
+- **Manipulação de Erros**:
+    - Tratamento de erros de conexão, permissões ou dados incorretos.
+      **Arquivo**: `error.py`.
+
+- **Controlador Principal**:
+    - Orquestra todo o fluxo:
+        1. Prepara os dados (deduplicação e transformação).
+        2. Envia para os endpoints (API, SFTP).
+        3. Gera notificações.
+           **Arquivo**: `main.py`.
+```mermaid
+graph TD
+    A[main.py<br>Controlador Geral] --> B[Mock de Dados<br> Ex.: mock_data_*]
+    A --> C[Deduplicação e Validação<br> dedup.py, transform.py]
+    C --> D[Transformação de Dados<br> replace_missing, validações ]
+    D --> E[Envio dos Dados<br> send_api.py, send_sftp.py ]
+    E --> F[Notificações por Email<br> smtp_service.py ]
+
+```
+### **Resumo da Implementação**
+1. Dados estão em **mock** (`pandas`).
+2. Processamento (deduplicação e validação) organiza e corrige problemas.
+3. Dados são enviados para:
+    - **APIs**: Consumidas via `APIConnection`.
+    - **SFTP**: Transferência com autenticação.
+
+4. Comunicação por email para notificar sucesso ou falhas.
 
 ## Criação e Limpeza de Base
 **Tratamento de valores nulos:**
@@ -86,7 +144,8 @@ Pensando em melhorias e maior automação;
 
 ## Guardrails e Monitoramento
 
-Em caso de falha um email será enviado para uma lista de emails, previamente definida. 
+Em caso de falha um email será enviado para uma lista de emails, previamente definida. Já em caso de sucesso, também será enviado
+um email informando que pipeline foi executado com sucesso
 Quanto aos alertas será necessário criar umas configurações no Cloud Monitoring. Como mostra as imagens abaixo
 
 ![Alerta_Cloud_Run.png](assets/Alerta_Cloud_Run.png)
@@ -94,4 +153,6 @@ Quanto aos alertas será necessário criar umas configurações no Cloud Monitor
 ## Pontos de melhoria
 
 - Uso do Terraform para automatizar todas as etapas (Deploy, Agendamento e Monitoramento)
-- Separação das responsabilidades
+- Separação das responsabilidades (pequenos projetos + pip install)
+- Factory para parte de monitoramento ou Pub/Sub e Cloud Functions
+- Great Expections antes de enviar os dados 
