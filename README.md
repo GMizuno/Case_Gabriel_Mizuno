@@ -1,9 +1,23 @@
 # Case Gabriel Mizuno
 
-Nesse case foquei em mostrar quais métodos e como organizar o código, visando deixar o código claro e simples.
-Na útlima seção deixei alguns pontos de melhorias numa seção no final.
+Este case foi desenvolvido para demonstrar métodos e organização de código voltados para promover **clareza
+** e **simplicidade** no tratamento e envio de dados. As implementações apresentadas são baseadas em cenários simulados
+e servem como **guia** e ponto de partida para projetos de maior complexidade. Para uso em produção, será necessário
+explorar e compreender algumas bibliotecas específicas mais avançadas, como:
+
+- **SFTP**: Utilizando bibliotecas como `paramiko` para conexão segura.
+- **API**: Com suporte para requisições e funcionalidades adicionais como **retries** (ex.: `requests` com `backoff`) ou
+  maior volume de requisições concorrentes usando `httpx`.
+- **SMTP**: Configuração e envio de notificações por meio do módulo `smtplib`.
+
+A arquitetura do projeto está estruturada para garantir que os dados sejam deduplicados, validados e transformados,
+antes de serem enviados para **endpoints** externos (via API/SFTP) ou utilizados para notificações automatizadas.
+No final do case, serão apresentados alguns pontos de melhoria e soluções que podem ser implementadas ou adaptadas
+dependendo do contexto e da disponibilidade de informações adicionais. Estas sugestões incluem automação, monitoramento,
+validações mais robustas e separação de responsabilidades para garantir a escalabilidade e manutenção futura do projeto.
 
 ## Arquiterura
+
 1. **Mock de Dados**:
     - Dados simulados de _clientes_, _produtos_ e _transações_ em formato `pandas.DataFrame`.
       **Arquivos**: `client.py`, `products.py`, `transaction.py`.
@@ -31,6 +45,7 @@ Na útlima seção deixei alguns pontos de melhorias numa seção no final.
       **Arquivo**: `stmp_service.py`.
 
 #### **Componentes Principais**
+
 - **Validação e Regras de Negócio**:
     - Validação de formatos (ex.: email, telefone).
       **Arquivo**: `validations.py`.
@@ -45,16 +60,19 @@ Na útlima seção deixei alguns pontos de melhorias numa seção no final.
         2. Envia para os endpoints (API, SFTP).
         3. Gera notificações.
            **Arquivo**: `main.py`.
+
 ```mermaid
 graph TD
     A[main.py<br>Controlador Geral] --> B[Mock de Dados<br> Ex.: mock_data_*]
     A --> C[Deduplicação e Validação<br> dedup.py, transform.py]
-    C --> D[Transformação de Dados<br> replace_missing, validações ]
-    D --> E[Envio dos Dados<br> send_api.py, send_sftp.py ]
-    E --> F[Notificações por Email<br> smtp_service.py ]
+    C --> D[Transformação de Dados<br> replace_missing, validações]
+    D --> E[Envio dos Dados<br> send_api.py, send_sftp.py]
+    E --> F[Notificações por Email<br> smtp_service.py]
 
 ```
+
 ### **Resumo da Implementação**
+
 1. Dados estão em **mock** (`pandas`).
 2. Processamento (deduplicação e validação) organiza e corrige problemas.
 3. Dados são enviados para:
@@ -64,23 +82,27 @@ graph TD
 4. Comunicação por email para notificar sucesso ou falhas.
 
 ## Criação e Limpeza de Base
+
 **Tratamento de valores nulos:**
 
-1.   Transaction: Itens com preço nulo serão desconsiderado
-2.   Clients: Clientes sem e-mail preenchido corretamento serão substituidos por "Sem Email", clientes sem telefone preenchido corretamento serão substituidos por "Sem Telefone",
-3.   Products: Nenhum tratativa será feita nessas tabelas, pois assumisse que essa tabela terá os campos corretamente preenchidos
+1. Transaction: Itens com preço nulo serão desconsiderado
+2. Clients: Clientes sem e-mail preenchido corretamento serão substituidos por "Sem Email", clientes sem telefone
+   preenchido corretamento serão substituidos por "Sem Telefone",
+3. Products: Nenhum tratativa será feita nessas tabelas, pois assumisse que essa tabela terá os campos corretamente
+   preenchidos
 
 **Deduplicação:**
 
-1.   Transaction: Dado um id de transação so podemos ter 1 único por pedido, ou seja, a chave primária será a concatenação do id com Product. No exemplo a abaixo o segundo item será desconsiderado
+1. Transaction: Dado um id de transação so podemos ter 1 único por pedido, ou seja, a chave primária será a concatenação
+   do id com Product. No exemplo a abaixo o segundo item será desconsiderado
 
 | id | Product | Quantity | Date       |
 |----|---------|----------|------------|
 | 1  | XXX     | 1        | 2024-10-01 |
 | 1  | XXX     | 2        | 2024-10-02 |
 
-
-2.   Clients: Como o objetivo desssa tabela será manter um canal de contato mais atualizado em caso de id duplica será deletado o registro mais antigo.
+2. Clients: Como o objetivo desssa tabela será manter um canal de contato mais atualizado em caso de id duplica será
+   deletado o registro mais antigo.
 
 | id | Emial | Date       |
 |----|-------|------------|
@@ -91,18 +113,21 @@ Outro cenario possível é de clientes com id diferentes mais com mesmo email. N
 
 **Correção de inconsistências de formato:**
 
-1.   Transaction: Transações com valores negativos será desconsideras
-2.   Clients:
+1. Transaction: Transações com valores negativos será desconsideras
+2. Clients:
 
     *   Email que não seguirem um padrão serão substituidos por Email Inválido
     *   Telefone que não seguirem um padrão serão substituidos por Telefone Inválido
 
 ## Automação do Processo
 
-Para automação do job foi utilizado o GCloud e Cloud Run para execução, existem duas possibilidades; Terraform ou Gcloud (linha de comando). Para
+Para automação do job foi utilizado o GCloud e Cloud Run para execução, existem duas possibilidades; Terraform ou
+Gcloud (linha de comando). Para
 esse case usarei o Gcloud.
 
-OBS: link para [Terraform](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_job) e [GCloud](https://cloud.google.com/run/docs/create-jobs)
+OBS: link
+para [Terraform](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_job)
+e [GCloud](https://cloud.google.com/run/docs/create-jobs)
 
 ```bash
 
@@ -116,7 +141,6 @@ gcloud run jobs deploy job-case-gabriel-mizuno \
 ```
 
 ![Log_Cloud_Run.png](assets/Log_Cloud_Run.png)
-
 
 Como esse código conseguimos criar um job SEM agendamento. Para realizar um agendamento basta executar o seguinte codigo
 
@@ -132,7 +156,8 @@ gcloud scheduler jobs create http test-job --schedule "5 9 * * *" \
 
 ![Cloud_Run_Scheduler.png](assets/Cloud_Run_Scheduler.png)
 
-Após a execução dos comandos, será necessário criar um alerta manualmente no Cloud Monitoring, como mostrando na imagem abaixo
+Após a execução dos comandos, será necessário criar um alerta manualmente no Cloud Monitoring, como mostrando na imagem
+abaixo
 
 ![Alerta_Cloud_Run.png](assets/Alerta_Cloud_Run.png)
 
@@ -144,7 +169,8 @@ Pensando em melhorias e maior automação;
 
 ## Guardrails e Monitoramento
 
-Em caso de falha um email será enviado para uma lista de emails, previamente definida. Já em caso de sucesso, também será enviado
+Em caso de falha um email será enviado para uma lista de emails, previamente definida. Já em caso de sucesso, também
+será enviado
 um email informando que pipeline foi executado com sucesso
 Quanto aos alertas será necessário criar umas configurações no Cloud Monitoring. Como mostra as imagens abaixo
 
